@@ -1,0 +1,130 @@
+;; mac-jis.kbd - Kanata config for MacBook Air (built-in JIS keyboard)
+;; Design: thumb mods (eisu/space/kana), Caps = Esc / Symbol+Number.
+;; Existing number pad follows forest-tech/my-karabiner-elements.
+;; Recommended: Kanata v1.12.0+; macOS JIS hardware layout and ABC input source.
+;;
+;; IMPORTANT: confirm the device name using `kanata --list` before running.
+;; Keep Karabiner-Elements complex modifications disabled while using Kanata.
+
+(defcfg
+  process-unmapped-keys yes
+  ;; Restrict this JIS mapping to the BUILT-IN keyboard. External US boards
+  ;; must have their own config (or firmware mapping).
+  macos-dev-names-include ("Apple Internal Keyboard / Trackpad")
+)
+
+;; deflayermap is intentionally used: keys not mentioned here pass through.
+(defsrc)
+
+;; ============================================================================
+;; FEATURE SWITCHES - edit ONLY the value in the right column.
+;; ============================================================================
+;;   feature-eisu:    @eisu-cmd       ON  / eisu OFF
+;;   feature-space:   @space-ctrl     ON  / spc  OFF
+;;                    @space-ctrl-fast = quicker Ctrl shortcuts, more risk
+;;                    of accidental Ctrl while typing.
+;;   feature-kana:    @kana-shift     ON  / kana OFF
+;;   feature-symbol1: @caps-symbol1   ON  / esc  OFF (keep Esc)
+;;   feature-symbol2: @hold-symbol2   ON  / XX   OFF
+;;
+;; Modes are independent. Change one value and run `kanata --check --cfg`.
+;; With Symbol1 OFF, Symbol2 is unreachable.
+(defvar
+  feature-eisu       @eisu-cmd
+  feature-space      @space-ctrl
+  feature-kana       @kana-shift
+  feature-symbol1    @caps-symbol1
+  feature-symbol2    @hold-symbol2
+
+  tap-repress-ms     180
+  hold-eisu-ms       180
+  hold-space-ms      190
+  hold-kana-ms       180
+  hold-caps-ms       180
+)
+
+;; ============================================================================
+;; PHYSICAL KEY ACTIONS
+;; ============================================================================
+(defalias
+  ;; Tap eisu, hold Command. Note that eisu/kana are macOS JIS key names.
+  eisu-cmd       (tap-hold-press $tap-repress-ms $hold-eisu-ms eisu lmet)
+
+  ;; Conservative mode waits for the hold timeout: avoids mistaken Ctrl+letter
+  ;; when typing ordinary prose quickly (e.g. space then j).
+  space-ctrl     (tap-hold $tap-repress-ms $hold-space-ms spc lctl)
+  space-ctrl-fast (tap-hold-press $tap-repress-ms $hold-space-ms spc lctl)
+
+  ;; Tap kana, hold Shift.
+  kana-shift     (tap-hold-press $tap-repress-ms $hold-kana-ms kana lsft)
+
+  ;; Tap Escape for Vim, hold Symbol1. Other key presses activate hold early.
+  caps-symbol1   (tap-hold-press $tap-repress-ms $hold-caps-ms esc (layer-while-held symbol1))
+
+  ;; While Caps is held, hold kana to access Symbol2 (pairs and alternates).
+  hold-symbol2   (layer-while-held symbol2)
+)
+
+;; BASE: only intercept keys that actually have remappings.
+(deflayermap (base)
+  eisu $feature-eisu
+  spc  $feature-space
+  kana $feature-kana
+  caps $feature-symbol1
+)
+
+;; ============================================================================
+;; SYMBOL 1 / NUMBER
+;; Physical:   Q  W  E  R  T    Y  U  I  O  P
+;;            A  S  D  F  G    H  J  K  L  ;
+;;            Z  X  C  V  B    N  M  ,  .  /
+;; Output:     .  @  %  `  !    {  7  8  9  ,
+;;             .  '  /  :  *    (  4  5  6  <
+;;             .  $  =  -  |    [  1  2  3  /
+;;                              SPACE = 0
+;;
+;; Note: these are *physical keycodes* assuming a macOS JIS layout:
+;;   lbrc is '@'        S-lbrc is '`'      rbrc is '['
+;;   S-rbrc is '{'      apo is ':'         S-apo is '*'
+;;   eql is '^'         S-min is '='       S-<YEN> is '|'
+;; We deliberately do NOT use (unicode ...), to keep terminal key events.
+;; Q/A/Z are left alone; they are difficult to reach with Caps held.
+(deflayermap (symbol1)
+  kana $feature-symbol2
+
+  w lbrc      e S-5       r S-lbrc    t S-1
+  y S-rbrc    u 7         i 8         o 9        p ,
+
+  s S-7       d /         f apo       g S-apo
+  h S-8       j 4         k 5         l 6        ; S-,
+
+  x S-4       c S-min     v min       b S-¥
+  n rbrc      m 1         , 2         . 3        / /
+  spc 0
+)
+
+;; ============================================================================
+;; SYMBOL 2 / NUMBER - while Caps AND kana are held.
+;; Physical:   Q  W  E  R  T    Y  U  I  O  P
+;;            A  S  D  F  G    H  J  K  L  ;
+;;            Z  X  C  V  B    N  M  ,  .  /
+;; Output:     .  @  %  ~  &    }  7  8  9  .
+;;             .  "  ?  ;  #    )  4  5  6  >
+;;             .  ^  +  _  \\    ]  1  2  3  ?
+;;                              SPACE = 0
+;; JIS: S-Backslash -> '}', Backslash -> ']', ro -> '_'.
+;; Mac JIS Yen key can be rendered as yen or backslash depending on input source.
+(deflayermap (symbol2)
+  ;; Do not trigger a second kana or Shift while the layer key is held.
+  kana XX
+
+  w lbrc      e S-5       r S-eql     t S-6
+  y S-Backslash u 7       i 8         o 9        p .
+
+  s S-2       d S-/       f scln      g S-3
+  h S-9       j 4         k 5         l 6        ; S-.
+
+  x eql       c S-scln    v ro        b ¥
+  n Backslash m 1         , 2         . 3        / S-/
+  spc 0
+)
