@@ -1,25 +1,28 @@
+[日本語](README.md) | [English](README_en.md)
+
 # Kanata keymap: MacBook Air JIS
 
-This is a draft Kanata `.kbd` file based on
-[`forest-tech/my-karabiner-elements`](https://github.com/forest-tech/my-karabiner-elements),
-with Vim-friendly ASCII symbol placement. It has **not** been tested on the
-actual MacBook keyboard.
+これは、Vim で使いやすい ASCII 記号配置にした Kanata の `.kbd` ファイルです。
+[`forest-tech/my-karabiner-elements`](https://github.com/forest-tech/my-karabiner-elements)
+をもとにしたドラフトで、実際の MacBook キーボードではまだテストしていません。
 
-## Configuration
+## 設定
 
-- `mac-jis.kbd`: built-in Apple JIS keyboard only.
-- Three thumb actions: `eisu` tap/Command hold, `Space` tap/Control hold,
-  `kana` tap/Shift hold.
-- `Caps` tap = Escape; hold = Symbol1/Numbers; hold Caps + kana = Symbol2.
-- No Home Row Mods or Navigation layer.
-- Emacs Control remaps from the previous Karabiner config are **not** enabled
-  because they would override shortcuts in the terminal, tmux and Neovim.
+- `mac-jis.kbd`: Apple の内蔵 JIS キーボードのみを対象とします。
+- 3 つの親指キー操作: `eisu` はタップで Eisu、ホールドで Command、
+  `Space` はタップで Space、ホールドで Control、`kana` はタップで Kana、
+  ホールドで Shift になります。
+- `Caps` はタップで Escape、ホールドで Symbol1/Numbers、
+  `Caps` をホールドしながら `kana` で Symbol2 になります。
+- Home Row Mods と Navigation レイヤーはありません。
+- 以前の Karabiner 設定にあった Emacs Control のリマップは、ターミナル、
+  tmux、Neovim のショートカットを上書きしてしまうため有効にしていません。
 
-## Enable/disable each feature
+## 各機能の有効化・無効化
 
-Edit the `FEATURE SWITCHES` block at the top of `mac-jis.kbd`:
+`mac-jis.kbd` の先頭にある `FEATURE SWITCHES` ブロックを編集します。
 
-| Variable | ON (default) | OFF |
+| 変数 | ON（デフォルト） | OFF |
 | --- | --- | --- |
 | `feature-eisu` | `@eisu-cmd` | `eisu` |
 | `feature-space` | `@space-ctrl` | `spc` |
@@ -27,76 +30,78 @@ Edit the `FEATURE SWITCHES` block at the top of `mac-jis.kbd`:
 | `feature-symbol1` | `@caps-symbol1` | `esc` |
 | `feature-symbol2` | `@hold-symbol2` | `XX` |
 
-For faster Space/Ctrl, change `feature-space` to `@space-ctrl-fast`.
-It may cause unintended Ctrl shortcuts during quick ordinary typing.
-`feature-symbol1 = esc` also makes Symbol2 unreachable. These flags are
-applied when you restart Kanata or reload the configuration.
+Space/Ctrl の反応を速くするには、`feature-space` を
+`@space-ctrl-fast` に変更します。通常のキー入力を素早く行ったときに、
+意図しない Ctrl ショートカットが発生することがあります。
+`feature-symbol1 = esc` にすると Symbol2 も使用できなくなります。
+これらのフラグは、Kanata を再起動するか設定を再読み込みしたときに適用されます。
 
-The timing variables are in the same `defvar` section. Start with the defaults,
-then tune the hold times if you notice accidental shortcuts or excessive delay.
+タイミング変数も同じ `defvar` セクションにあります。まずはデフォルト値から始め、
+意図しないショートカットや過度な遅延がある場合にホールド時間を調整してください。
 
-## Symbol layer outputs
+## 記号レイヤーの出力
 
-The key shown above each symbol is the physical alphabet key. A dot (`-` in
-this table) means the original key has no dedicated symbol mapping.
+各記号の上に表示されているキーは、物理的なアルファベットキーです。
+ドット（この表では `-`）は、元のキーに専用の記号マッピングがないことを示します。
 
-| Physical | Q | W | E | R | T | Y | U | I | O | P |
+| 物理キー | Q | W | E | R | T | Y | U | I | O | P |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | Caps = Symbol1 | - | @ | % | ` | ! | { | 7 | 8 | 9 | , |
 | Caps + kana = Symbol2 | - | @ | % | ~ | & | } | 7 | 8 | 9 | . |
 
-| Physical | A | S | D | F | G | H | J | K | L | ; |
+| 物理キー | A | S | D | F | G | H | J | K | L | ; |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | Symbol1 | - | ' | / | : | * | ( | 4 | 5 | 6 | < |
 | Symbol2 | - | " | ? | ; | # | ) | 4 | 5 | 6 | > |
 
-| Physical | Z | X | C | V | B | N | M | , | . | / | Space |
+| 物理キー | Z | X | C | V | B | N | M | , | . | / | Space |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | Symbol1 | - | $ | = | - | \| | [ | 1 | 2 | 3 | / | 0 |
 | Symbol2 | - | ^ | + | _ | \ | ] | 1 | 2 | 3 | ? | 0 |
 
-The 32 printable ASCII punctuation symbols and digits `0-9` are covered
-across these two layers. JIS layout is used at the macOS input-source level:
-this file sends keycodes, not Unicode glyphs.
+これら 2 つのレイヤーで、印字可能な ASCII 記号 32 個と数字 `0-9` を網羅しています。
+JIS 配列は macOS の入力ソース側で使用します。このファイルが送信するのはキーコードであり、
+Unicode のグリフではありません。
 
-## Setup / test on macOS
+## macOS でのセットアップ・テスト
 
-1. Ensure the matching Karabiner-DriverKit-VirtualHIDDevice driver is installed
-   for the version of Kanata you use. Follow the
-   [official macOS setup](https://github.com/jtroo/kanata/blob/main/docs/setup-macos.md).
-2. **Disable Karabiner-Elements' active remapping / keyboard grabbing** before
-   starting Kanata to avoid interference. Do not uninstall the shared driver.
-3. Check the exact built-in keyboard name:
-   `kanata --list`. The file currently uses
-   `"Apple Internal Keyboard / Trackpad"`. Edit `macos-dev-names-include`
-   if your device appears under another name.
-4. Check configuration syntax (does not require device grabs):
-   `kanata --check --cfg ./mac-jis.kbd`.
-5. Start Kanata following official macOS setup instructions, e.g.
-   `sudo kanata --cfg ./mac-jis.kbd`.
-6. Test in a plain text editor (ABC input source), then in Ghostty and Neovim.
+1. 使用する Kanata のバージョンに対応する Karabiner-DriverKit-VirtualHIDDevice
+   ドライバーがインストールされていることを確認します。
+   [macOS 公式セットアップ手順](https://github.com/jtroo/kanata/blob/main/docs/setup-macos.md)
+   に従ってください。
+2. Kanata を起動する前に、干渉を避けるため **Karabiner-Elements の有効なリマップや
+   キーボードの取得を無効にします**。共有ドライバーはアンインストールしないでください。
+3. 内蔵キーボードの正確な名前を確認します: `kanata --list`。
+   現在、このファイルでは `"Apple Internal Keyboard / Trackpad"` を使用しています。
+   デバイスが別の名前で表示される場合は `macos-dev-names-include` を編集してください。
+4. 設定の構文を確認します（デバイスの取得は不要です）。
+   `kanata --check --cfg ./mac-jis.kbd`
+5. macOS の公式セットアップ手順に従って Kanata を起動します。例:
+   `sudo kanata --cfg ./mac-jis.kbd`
+6. プレーンテキストエディター（ABC 入力ソース）でテストし、その後 Ghostty と Neovim
+   でもテストします。
 
-### Smoke test
+### スモークテスト
 
-- Tap `Caps` -> Escape; hold `Caps + F` -> `:`.
-- `Caps + D` -> `/`; `Caps + kana + D` -> `?`.
-- `Caps + X` -> `$`; `Caps + kana + X` -> `^`.
-- `Caps + G` -> `*`; `Caps + kana + G` -> `#`.
-- `Caps + H` -> `(`; `Caps + kana + H` -> `)`.
-- `Caps + U/I/O` -> `7/8/9`; `Caps + Space` -> `0`.
-- `Caps + B` -> `|`; `Caps + kana + B` -> backslash.
-- Hold `Space` for approximately 190 ms, then press `F` -> Control+F.
-- Test repeated `j` in Neovim (should behave like normal repeated `j`).
-- Check both ABC and Japanese input modes for the Yen/backslash key and IME behavior.
+- `Caps` をタップ -> Escape、`Caps + F` をホールド -> `:`
+- `Caps + D` -> `/`、`Caps + kana + D` -> `?`
+- `Caps + X` -> `$`、`Caps + kana + X` -> `^`
+- `Caps + G` -> `*`、`Caps + kana + G` -> `#`
+- `Caps + H` -> `(`、`Caps + kana + H` -> `)`
+- `Caps + U/I/O` -> `7/8/9`、`Caps + Space` -> `0`
+- `Caps + B` -> `|`、`Caps + kana + B` -> バックスラッシュ
+- `Space` を約 190 ms ホールドしてから `F` を押す -> Control+F
+- Neovim で `j` を連続入力する（通常の `j` の連続入力として動作すること）
+- ABC と日本語の両方の入力モードで、円記号/バックスラッシュキーと IME の動作を確認する
 
-**Known limitations:** No macOS live keyboard test has been performed.
-Apple JIS symbol output depends on the active input source. Yen/backslash,
-pipe, underscore and braces are especially worth verifying. The Symbol2
-trigger requires holding Caps and kana at once, which may be awkward to reach;
-this is intentionally left as an initial ergonomic experiment.
+**既知の制限:** macOS 上での実機キーボードテストはまだ行っていません。
+Apple JIS の記号出力は、アクティブな入力ソースに依存します。円記号/バックスラッシュ、
+パイプ、アンダースコア、波括弧は特に確認が必要です。Symbol2 のトリガーは Caps と
+kana を同時にホールドする必要があり、押しにくい可能性があります。これは意図的に
+初期のエルゴノミクス実験として残しています。
 
-## Sources
+## 参照
 
-- [Kanata configuration guide](https://jtroo.github.io/config.html)
-- [Kanata macOS setup](https://github.com/jtroo/kanata/blob/main/docs/setup-macos.md)
-- [Previous Karabiner map](https://github.com/forest-tech/my-karabiner-elements)
+- [Kanata 設定ガイド](https://jtroo.github.io/config.html)
+- [Kanata macOS セットアップ](https://github.com/jtroo/kanata/blob/main/docs/setup-macos.md)
+- [以前の Karabiner マップ](https://github.com/forest-tech/my-karabiner-elements)
